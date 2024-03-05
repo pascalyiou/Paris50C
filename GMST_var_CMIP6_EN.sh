@@ -1,7 +1,7 @@
 #!/bin/env bash -l
-## Comutation of global annual mean surface temperatures in CMIP6
+## Computation of global annual mean surface temperatures in CMIP6
 ## Use (on spiritx @ IPSL):
-## sbatch --partition zen4 --time 60:00:00 ${HOME}/programmes/RStat/GREC50/scripts_EN/GWD_var_CMIP6_EN.sh varname
+## sbatch --partition zen4 --time 60:00:00 ${HOME}/programmes/RStat/GREC50/scripts_EN/GMST_var_CMIP6_v2_EN.sh varname
 ## Adapt to your own server architecture
 ## This programme requires a reasonably recent version of cdo:
 ## https://code.mpimet.mpg.de/projects/cdo
