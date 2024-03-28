@@ -39,7 +39,7 @@ if(length(args)>0){
 }else{
     varname = "tasmax"
     T0 = 48
-## Securite: on veut une variation de moins de Tresh (10°C) pour atteindre 48°C
+## Securite: on veut une variation de moins de Tthresh (10°C) pour atteindre 48°C
     Tthresh=20
     horizon = 2100
 }
@@ -47,8 +47,10 @@ if(length(args)>0){
 ## Colors for figures
 l.col=list(ssp126="green",ssp245="blue",ssp370="orange",ssp585="red")
 
+## READ INPUT OBSERVATIONS
 ## Read GMST (global surface tempetature) in ERA5
 ## Data is obtained from the Climate Explorer
+## The data is also in the data/ directory
 fname=paste(ERA5dir,"era5_t2m_year_GWD.nc",sep="")
 nc=nc_open(fname)
 time.dum = ncdf4.helpers::nc.get.time.series(nc)
@@ -60,6 +62,7 @@ T.ERA.late = mean(T.ERA[yy.ERA >= 1980])
 
 ## Read tmax over IdF from EOBS
 ## Data is obtained from the Climate Explorer
+## The data is also in the data/ directory
 seas="JJA"
 nc=nc_open(paste("/scratchx/",user,"/EOBS/iensembles_025_tx_1.75-3.25E_48.25-49.25N_n_max.nc",sep=""))
 time.dum = ncdf4.helpers::nc.get.time.series(nc)
@@ -92,7 +95,7 @@ mmdd=mm.TN.EOBS*100+dd.TN.EOBS
 TN.seas = tapply(TN.EOBS,mmdd,mean,na.rm=TRUE)
 TN.seas.spl = smooth.spline(TN.seas,spar=0.8)
 
-
+## READ RESULTS FILE
 setwd(Tdir)
 outfiR=paste(varname,"_T",T0,"_dT",Tthresh,"_horiz",horizon,"_CMIP6_2.Rdat",
              sep="")
@@ -119,6 +122,8 @@ for(i in 1:length(umod)){
 fout=paste(varname,"_T",T0,"_dT",Tthresh,"_horiz",horizon,"_CMIP6_table_2.txt",
            sep="")
 cat(file=fout,"Data for Table 1\n")
+GWI=c() ## Global Warming Increase since 1900
+GWI2=c() ## Global Warming Increase since 2000
 for(ff in names(T.exc)){
     dum=strsplit(ff,"_")[[1]]
     ssp=dum[4]
@@ -130,9 +135,15 @@ for(ff in names(T.exc)){
                         format(min(T.exc[[ff]]$GWDdiff),digits=2),
                         format(min(T.exc[[ff]]$GWDdiff21),digits=2),
                         "\n",sep="\t"),append=TRUE)
+    GWI=c(GWI, T.exc[[ff]]$GWDdiff)
+    GWI2=c(GWI2, T.exc[[ff]]$GWDdiff21)
 
 }#end for ff
 
+## Probability density of the years of TX>48°C
+GWI2.dens=density(GWI2)
+N.exc=length(T.exc)
+N.ssp=585
 
 ## First occurrence of T>T0 for each model
 l.first=list()
@@ -203,7 +214,7 @@ for(scen in c("ssp245","ssp370","ssp585")){
 
 }
 
-## Lecture des fichiers pr correspondants et extraction de l'été
+## Read pr (precip) files and extraction of summer
 l.JJA.pr=list()
 for(scen in c("ssp245","ssp370","ssp585")){
     yref=floor(as.numeric(l.f.scen[[scen]][3])/10000)
@@ -288,7 +299,7 @@ for(issp in c("ssp245","ssp370","ssp585")){
         colo=tcol(l.first[[ff]]$GWD)
         sspoff=ssp.off(ssp)
         if(ssp == issp){
-            points(imodna,yfirst,col=colo,pch=19,cex=2)
+            points(imodna,yfirst,col=colo,pch=19,cex=4)
 ##            points(imodna,yfirst,col=colo,pch=ssp.sym(ssp))
         }
     }
@@ -373,8 +384,30 @@ for(scen in c("ssp245","ssp370","ssp585")){
 dev.off()
 
 ## Figure des "codes barres" de GMST les annees où on dépasse 48°C
+## Barcode figure of Delta GMST for years when T>48°C
 scen.col=list(ssp245="blue",ssp370="green",ssp585="red")
 
+fout="barcode_GWL_CMIP6.pdf"
+pdf(fout)
+par(mar=c(4,4,1,1))
+plot(c(1,8),c(0,0.09),type="n",xlab="Delta GMST (1950-2000) [°C]",
+     ylab="Proba",axes=FALSE)
+axis(side=1)
+axis(side=2)
+box()
+for(i in 1:length(T.exc)){
+    abline(v=T.exc[[i]]$GWDdiff2,col=scen.col[[T.exc[[i]]$scen]])
+}
+lines(GWI2.dens$x,GWI2.dens$y*N.exc/N.ssp,lwd=3)
+##legend("topleft",bty="n",legend="(b)")
+legend("bottomleft",legend=names(scen.col),lwd=2,col=unlist(scen.col),
+       bty="n")
+dev.off()
+
+
+q("no")
+
+## Similar barcode figure, but with Delta GMST from 1850-1900
 fout="barcode_GWL_CMIP6.pdf"
 pdf(fout)
 layout(matrix(1:2,2,1))
@@ -400,5 +433,3 @@ legend("topleft",bty="n",legend="(b)")
 legend("bottomleft",legend=names(scen.col),lwd=2,col=unlist(scen.col),
        bty="n")
 dev.off()
-
-q("no")
