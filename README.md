@@ -29,6 +29,10 @@ List of code files, in use order:
 
 6. CMIP6_SLP_fileprep.sh: bash and cdo commands to extract SLP fields for selected events in selected models/runs
 
+7. ENSO-AMO_CMIP6.sh: bash and cdo commands to compute Nino3.4 and AMO indices from the CMIP6 archive
+
+8. ENSO-AMO_CMIP6_diags.R: R code to produce a scatter plot of Nino3.4 and AMO indices when temperature exceeds 48°C in selected simulations.
+
 List of data files:
 1. era5_t2m_year_GWD.nc: global mean surface temperature (GMST) from ERA5 (extracted from the Climate Explorer)
 
