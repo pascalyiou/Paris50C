@@ -38,7 +38,7 @@ if(length(args)>0){
     varname = args[i];i=i+1
     seas =args[i];i=i+1
 }else{
-    varname = "tasmax"
+    varname = "tas"
     seas = "JJA"
 }
 
