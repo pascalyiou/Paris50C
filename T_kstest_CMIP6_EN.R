@@ -7,7 +7,7 @@
 ## For commercial uses, please contact Pascal Yiou (pascal.yiou@lsce.ipsl.fr)
 
 ##Example use:
-## R CMD BATCH "--args tasmax JJA" ${HOME}/programmes/RStat/GREC50/scripts_EN/V2/T_kstest_CMIP6.R
+## R CMD BATCH "--args tas JJA" ${HOME}/programmes/RStat/GREC50/scripts_EN/V2/T_kstest_CMIP6.R
 ## This R script requires that times series of CMIP6 models have been created
 ## by:
 ## ${HOME}/programmes/RStat/GREC50/scripts_EN/V2/extract_var_CMIP6_EN_v2.sh varname operator subsca
